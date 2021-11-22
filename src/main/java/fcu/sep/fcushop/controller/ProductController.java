@@ -1,5 +1,6 @@
 package fcu.sep.fcushop.controller;
 
+import fcu.sep.fcushop.database.Sql2oDbHandler;
 import fcu.sep.fcushop.model.Product;
 import fcu.sep.fcushop.service.ProductService;
 
@@ -17,23 +18,11 @@ public class ProductController{
   ProductService productManager;
 
   @GetMapping("/products")
-  public List<Product> getProducts() {
-    try (org.sql2o.Connection connection = sql2oDbHandler.getConnector().open()) {
-      String query = "select ID id, NAME name, IMAGE_URL imageUrl, PRICE price, DESCRIPTION description"
-          + " from PRODUCT";
+  public List<Product> getProducts() {return productManager.getProducts();}
 
-      return connection.createQuery(query).executeAndFetch(Product.class);
-    }
-  }
-  public List<Product> getProducts(String keyword){
-    try(Connection connection = sql2oDbHandler.getConnector().open()){
-      String query = "select ID id , NAME name,IMAGE_URL imageUrl,PRICE price, DESCRIPTION description"
-          + "form PRODUCT where name = : keyword";
+  @GetMapping("/keyword")
+  public List<Product> getProducts(@RequestParam String keyword){
 
-      return connection.createQuery(query)
-          .addParameter(keyword, keyword)
-          .executeAndFetch(Product.class);
-
-    }
+      return  productManager.getProducts(keyword);
   }
 }
